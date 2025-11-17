@@ -24,9 +24,11 @@
 
 ---
 
-## Разработка
+# Разработка
 
 Идея заключается в том, чтобы сделать `webview` приложение, которое будет брать данные с `C++` сервера.
+
+## FAQ
 
 ### Как склонировать репозиторий?
 `git clone --recurse-submodules https://github.com/Quaha/sugar-beet-processing-dss`
@@ -34,7 +36,18 @@
 ### Необходимые `python` зависимости:
 - `pip install PyQt6 PyQt6-WebEngine`
 
-### Как собрать серверную часть для доработки?
-- В папке `server` создать папку `build`
-- Из неё в консоли прописать `cmake ..`
-- Открыть `server.sln` (MVS2022)
+### Как собрать и открыть серверную часть для доработки (MVS)?
+- В папке `/server` в консоли прописать `cmake -S . -B build_static -DBUILD_FOR_DLL=OFF`
+- Открыть `server/build_static/server.sln` (с помощью MVS2022)
+
+### Как запустисть тесты (MVS)
+- Собрать сервеную часть для доработки
+- Открыть `.sln` файл в Microsoft Visual Studio
+- Выбрать `server_tests` в качестве запускаемого проекта
+- Запустить код
+
+### Как собрать `dll` файл
+- В папке `/server` прописать `cmake -S . -B build_dll -DBUILD_FOR_DLL=ON`
+- В папке `/server` прописать `cmake --build build_dll --config Release`
+
+.dll файл будет лежать в `server\build_dll\Release`

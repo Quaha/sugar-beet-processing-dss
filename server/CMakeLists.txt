@@ -11,18 +11,38 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS include/*.hpp)
 
-add_library(${PROJECT_NAME}_library 
-    ${SRC_FILES} 
-    ${HEADER_FILES}
-)
+option(BUILD_FOR_DLL "Build only for creating DLL" OFF)
 
-# Header files
-target_include_directories(${PROJECT_NAME}_library
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}/include
-)
+if(BUILD_FOR_DLL)
+    add_library(${PROJECT_NAME}_library SHARED
+        ${SRC_FILES} 
+        ${HEADER_FILES}
+    )
 
-# gtest
-enable_testing()
-add_subdirectory(external/gtest EXCLUDE_FROM_ALL)
-add_subdirectory(tests)
+    target_compile_definitions(server_library PRIVATE SERVER_LIBRARY_EXPORT)
+
+    # Header files
+    target_include_directories(${PROJECT_NAME}_library
+        PUBLIC
+            ${CMAKE_SOURCE_DIR}/include
+    )
+else()
+    add_library(${PROJECT_NAME}_library
+        ${SRC_FILES} 
+        ${HEADER_FILES}
+    )
+
+    target_compile_definitions(server_library PRIVATE SERVER_LIBRARY_EXPORT)
+
+    # Header files
+    target_include_directories(${PROJECT_NAME}_library
+        PUBLIC
+            ${CMAKE_SOURCE_DIR}/include
+    )
+	
+
+    # gtest
+    enable_testing()
+    add_subdirectory(external/gtest EXCLUDE_FROM_ALL)
+    add_subdirectory(tests)
+endif()

@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "export.hpp"
+
 /*
  * Class Matrix
  * ------------
