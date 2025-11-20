@@ -1,4 +1,4 @@
-/server/build/
-/server/build_static/
-/server/build_dll/
+/core/build/
+/core/build_static/
+/core/build_dll/
 /interface/__pycache__

@@ -36,9 +36,9 @@
 ### Необходимые `python` зависимости:
 - `pip install PyQt6 PyQt6-WebEngine`
 
-### Как собрать и открыть серверную часть для доработки (Microsoft Visual Studio)?
-- Удалить папку `/server/build_static`, если она есть
-- В папке `/server` в консоли прописать `cmake -S . -B build_static -DBUILD_FOR_DLL=OFF`
+### Как собрать и открыть `core` часть для доработки (Microsoft Visual Studio)?
+- Удалить папку `/core/build_static`, если она есть
+- В папке `/core` в консоли прописать `cmake -S . -B build_static -DBUILD_FOR_DLL=OFF`
 - Открыть `.sln` файл с помощью Microsoft Visual Studio
 
 ### Как запустисть тесты (Microsoft Visual Studio)
@@ -48,8 +48,8 @@
 - Запустить код
 
 ### Как собрать `dll` файл
-- Удалить папку `/server/build_dll`, если она есть
-- В папке `/server` прописать `cmake -S . -B build_dll -DBUILD_FOR_DLL=ON`
-- В папке `/server` прописать `cmake --build build_dll --config Release`
+- Удалить папку `/core/build_dll`, если она есть
+- В папке `/core` прописать `cmake -S . -B build_dll -DBUILD_FOR_DLL=ON`
+- В папке `/core` прописать `cmake --build build_dll --config Release`
 
-.dll файл будет лежать в `server/build_dll/Release`
+.dll файл будет лежать в `core/build_dll/Release`
