@@ -23,3 +23,22 @@ double& Matrix::operator()(int i, int j) {
 	}
 	return data[i][j];
 }
+
+int Matrix::size() const {
+	return n;
+}
+
+void Matrix::fillMatrix(
+	int    n,
+	double alpha_min,
+	double alpha_max,
+	double beta_1,
+	double beta_2,
+	bool   concentrated,
+	bool   maturation,
+	bool   inorganic,
+	int    v,
+	double beta_max
+) {
+
+}
