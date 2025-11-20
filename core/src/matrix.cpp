@@ -23,3 +23,7 @@ double& Matrix::operator()(int i, int j) {
 	}
 	return data[i][j];
 }
+
+int Matrix::size() const {
+	return n;
+}

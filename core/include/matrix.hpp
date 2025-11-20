@@ -22,4 +22,6 @@ public:
 
 	double operator()(int i, int j) const;
 	double& operator()(int i, int j);
+
+	int size() const;
 };

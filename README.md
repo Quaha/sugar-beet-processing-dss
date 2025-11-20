@@ -30,8 +30,11 @@
 
 ## FAQ
 
-### Как склонировать репозиторий?
+### Как склонировать репозиторий (main ветку)?
 `git clone --recurse-submodules https://github.com/Quaha/sugar-beet-processing-dss`
+
+### Как склонировать репозиторий (свою ветку)?
+`git clone --recurse-submodules https://github.com/Quaha/sugar-beet-processing-dss -b "<name_of_branch>"`
 
 ### Необходимые `python` зависимости:
 - `pip install PyQt6 PyQt6-WebEngine`
