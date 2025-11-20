@@ -26,7 +26,7 @@
 
 # Разработка
 
-Идея заключается в том, чтобы сделать `webview` приложение, которое будет брать данные с `C++` сервера.
+Идея заключается в том, чтобы сделать `webview` приложение, которое будет брать данные с `C++ core` частью посредством `dll` файла.
 
 ## FAQ
 
@@ -36,18 +36,20 @@
 ### Необходимые `python` зависимости:
 - `pip install PyQt6 PyQt6-WebEngine`
 
-### Как собрать и открыть серверную часть для доработки (MVS)?
+### Как собрать и открыть серверную часть для доработки (Microsoft Visual Studio)?
+- Удалить папку `/server/build_static`, если она есть
 - В папке `/server` в консоли прописать `cmake -S . -B build_static -DBUILD_FOR_DLL=OFF`
-- Открыть `server/build_static/server.sln` (с помощью MVS2022)
+- Открыть `.sln` файл с помощью Microsoft Visual Studio
 
-### Как запустисть тесты (MVS)
+### Как запустисть тесты (Microsoft Visual Studio)
 - Собрать сервеную часть для доработки
-- Открыть `.sln` файл в Microsoft Visual Studio
-- Выбрать `server_tests` в качестве запускаемого проекта
+- Открыть `.sln` файл с помощью Microsoft Visual Studio
+- Выбрать `core_tests` в качестве запускаемого проекта
 - Запустить код
 
 ### Как собрать `dll` файл
+- Удалить папку `/server/build_dll`, если она есть
 - В папке `/server` прописать `cmake -S . -B build_dll -DBUILD_FOR_DLL=ON`
 - В папке `/server` прописать `cmake --build build_dll --config Release`
 
-.dll файл будет лежать в `server\build_dll\Release`
+.dll файл будет лежать в `server/build_dll/Release`

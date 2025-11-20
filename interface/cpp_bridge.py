@@ -7,8 +7,8 @@ from pathlib import Path
 DLL_PATH = Path(__file__).parent / "server_library.dll"
 _lib = ctypes.CDLL(str(DLL_PATH))
 
-_lib.process_json.argtypes = [c_char_p]
-_lib.process_json.restype = c_char_p
+_lib.ProcessJSON.argtypes = [c_char_p]
+_lib.ProcessJSON.restype = c_char_p
 
 def process_json(input_data: dict) -> dict:
     """
@@ -19,5 +19,5 @@ def process_json(input_data: dict) -> dict:
     """
     
     input_str = json.dumps(input_data)
-    result_ptr = _lib.process_json(input_str.encode('utf-8'))
+    result_ptr = _lib.ProcessJSON(input_str.encode('utf-8'))
     return json.loads(result_ptr.decode('utf-8'))

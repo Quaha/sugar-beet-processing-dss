@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
 # Project name
-set(PROJECT_NAME server)
+set(PROJECT_NAME core)
 project(${PROJECT_NAME} LANGUAGES CXX)
+
+set(CXX_BRIDGE_DEFINE CORE_LIBRARY_EXPORT)
 
 # Standart version
 set(CMAKE_CXX_STANDARD 20)
@@ -19,7 +21,7 @@ if(BUILD_FOR_DLL)
         ${HEADER_FILES}
     )
 
-    target_compile_definitions(server_library PRIVATE SERVER_LIBRARY_EXPORT)
+    target_compile_definitions(server_library PRIVATE ${CXX_BRIDGE_DEFINE})
 
     # Header files
     target_include_directories(${PROJECT_NAME}_library
@@ -32,7 +34,7 @@ else()
         ${HEADER_FILES}
     )
 
-    target_compile_definitions(server_library PRIVATE SERVER_LIBRARY_EXPORT)
+    target_compile_definitions(${PROJECT_NAME}_library PRIVATE ${CXX_BRIDGE_DEFINE})
 
     # Header files
     target_include_directories(${PROJECT_NAME}_library

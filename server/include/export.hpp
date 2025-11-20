@@ -1,15 +1,15 @@
 #pragma once
 
 #if defined(_WIN32)
-	#ifdef SERVER_LIBRARY_EXPORT
-		#define SERVER_API __declspec(dllexport)
+	#ifdef CORE_LIBRARY_EXPORT
+		#define DLL_API __declspec(dllexport)
 	#else
-		#define SERVER_API __declspec(dllimport)
+		#define DLL_API __declspec(dllimport)
 	#endif
 #else
-	#define SERVER_API
+	#define DLL_API
 #endif
 
 extern "C" {
-	SERVER_API const char* process_json(const char* input_json);
+	DLL_API const char* ProcessJSON(const char* input_json);
 }

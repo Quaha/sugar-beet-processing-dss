@@ -2,7 +2,7 @@
 
 #include "matrix.hpp"
 
-const double EPSILON = 1e-9;
+constexpr double EPSILON = 1e-9;
 
 TEST(Matrix, CanCreateCorrectMatrix) {
     EXPECT_NO_THROW(Matrix(5));
