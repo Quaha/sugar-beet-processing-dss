@@ -29,7 +29,6 @@ int Matrix::size() const {
 }
 
 void Matrix::fillMatrix(
-	int    n,
 	double alpha_min,
 	double alpha_max,
 	double beta_1,
@@ -42,3 +41,13 @@ void Matrix::fillMatrix(
 ) {
 
 }
+
+double Matrix::getAlphaMin()    const { return alpha_min; }
+double Matrix::getAlphaMax()    const { return alpha_max; }
+double Matrix::getBeta1()       const { return beta_1; }
+double Matrix::getBeta2()       const { return beta_2; }
+bool   Matrix::isConcentrated() const { return concentrated; }
+bool   Matrix::hasMaturation()  const { return maturation; }
+bool   Matrix::isInorganic()    const { return inorganic; }
+int    Matrix::getV()           const { return v; }
+double Matrix::getBetaMax()     const { return beta_max; }

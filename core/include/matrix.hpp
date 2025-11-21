@@ -17,15 +17,15 @@ protected:
 	int n;
 	std::vector<std::vector<double>> data;
 
-	double alpha_min;
-	double alpha_max;
-	double beta_1;
-	double beta_2;
+	double alpha_min = 0.12;
+	double alpha_max = 0.22;
+	double beta_1    = 0.85;
+	double beta_2    = 1.00;
 	bool   concentrated = false;
 	bool   maturation   = false;
 	bool   inorganic    = false;
-	int    v = 0;
-	double beta_max;
+	int    v        = 0;
+	double beta_max = 1.15;
 
 public:
 	Matrix(int size);
@@ -37,7 +37,6 @@ public:
 	int size() const;
 
 	void fillMatrix(
-		int    n,
 		double alpha_min,
 		double alpha_max,
 		double beta_1,
@@ -48,4 +47,37 @@ public:
 		int    v,
 		double beta_max
 	);
+
+	double getAlphaMin()    const;
+	double getAlphaMax()    const;
+	double getBeta1()       const;
+	double getBeta2()       const;
+	bool   isConcentrated() const;
+	bool   hasMaturation()  const;
+	bool   isInorganic()    const;
+	int    getV()           const;
+	double getBetaMax()     const;
+};
+
+/*
+ * Class TestableMatrix
+ * ------------
+ * Required for testing the Matrix class.
+ * All the protected fields in it are public.
+ *
+*/
+class TestableMatrix : public Matrix {
+public:
+	using Matrix::n;
+	using Matrix::data;
+
+	using Matrix::alpha_min;
+	using Matrix::alpha_max;
+	using Matrix::beta_1;
+	using Matrix::beta_2;
+	using Matrix::concentrated;
+	using Matrix::maturation;
+	using Matrix::inorganic;
+	using Matrix::v;
+	using Matrix::beta_max;
 };
