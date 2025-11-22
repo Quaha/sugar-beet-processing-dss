@@ -7,5 +7,8 @@
 #include "matrix.hpp"
 
 TEST(OptimalStrategy, CanUseStrategy) {
-    EXPECT_NO_THROW(OptimalStrategy(Matrix(5)));
+    TestableMatrix tm(5);
+    Matrix m = tm;
+
+    EXPECT_NO_THROW(OptimalStrategy(m));
 }
