@@ -57,6 +57,8 @@ public:
 	bool   isInorganic()    const;
 	int    getV()           const;
 	double getBetaMax()     const;
+
+	double getStrategyScore(const std::vector<int>& seq) const;
 };
 
 /*

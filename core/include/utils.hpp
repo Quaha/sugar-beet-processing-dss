@@ -1,4 +1,6 @@
 #pragma once
 
-extern const double EPS = 1e-9;
-extern const int DAYS_PER_STAGE = 7;
+extern const double EPS;
+extern const int DAYS_PER_STAGE;
+
+double GetRandomDouble(double min, double max);
