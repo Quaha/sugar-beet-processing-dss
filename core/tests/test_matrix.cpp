@@ -4,21 +4,21 @@
 #include "utils.hpp"
 
 TEST(Matrix, CanCreateCorrectMatrix) {
-    EXPECT_NO_THROW(TestableMatrix(5));
+    EXPECT_NO_THROW(Matrix(5));
 }
 
 TEST(Matrix, CantCreateIncorrectMatrix) {
-    EXPECT_ANY_THROW(TestableMatrix(-4));
+    EXPECT_ANY_THROW(Matrix(-4));
 }
 
 TEST(Matrix, CanAccessElement) {
-    TestableMatrix m(3);
+    Matrix m(3);
 
     EXPECT_NO_THROW(m(1, 1));
 }
 
 TEST(Matrix, CantAccessElementWithIncorrectIndex) {
-    TestableMatrix m(3);
+    Matrix m(3);
 
     EXPECT_ANY_THROW(m(3, 1));
     EXPECT_ANY_THROW(m(1, 3));
@@ -27,14 +27,14 @@ TEST(Matrix, CantAccessElementWithIncorrectIndex) {
 }
 
 TEST(Matrix, CanModifyElement) {
-    TestableMatrix m(2);
+    Matrix m(2);
 
     EXPECT_NO_THROW(m(0, 0) = 5.0);
     EXPECT_NEAR(m(0, 0), 5.0, EPS);
 }
 
 TEST(Matrix, CantModifyElementWithIncorrectIndex) {
-    TestableMatrix m(2);
+    Matrix m(2);
 
     EXPECT_ANY_THROW(m(2, 0) = 3.0);
     EXPECT_ANY_THROW(m(0, 2) = 3.0);
@@ -43,7 +43,7 @@ TEST(Matrix, CantModifyElementWithIncorrectIndex) {
 }
 
 TEST(Matrix, CanGetSize) {
-    TestableMatrix m(3);
+    Matrix m(3);
 
     EXPECT_EQ(m.size(), 3);
 }
@@ -292,3 +292,35 @@ TEST(Matrix, CanGetBetaMax) {
 
     EXPECT_NEAR(1.15, m.getBetaMax(), EPS);
 }
+
+TEST(Matrix, CanGetStrategyScore) {
+    Matrix m(2);
+    std::vector<int> seq = { 0, 1 };
+
+    EXPECT_NO_THROW(m.getStrategyScore(seq));
+}
+
+TEST(Matrix, CantGetStrategyScoreWithIncorrectSeqNo1) {
+    Matrix m(2);
+    std::vector<int> seq = { 0, 1, 2 };
+
+    EXPECT_ANY_THROW(m.getStrategyScore(seq));
+}
+
+TEST(Matrix, CantGetStrategyScoreWithIncorrectSeqNo2) {
+    Matrix m(2);
+    std::vector<int> seq = { 3, -1};
+
+    EXPECT_ANY_THROW(m.getStrategyScore(seq));
+}
+
+TEST(Matrix, CanGetCorrectStrategyScore) {
+    Matrix m(2);
+    m(0, 0) = 1.0; m(0, 1) = 3.0;
+    m(1, 0) = 2.0; m(1, 1) = 1.5;
+
+    std::vector<int> seq = { 1, 0 };
+
+    EXPECT_NEAR(m.getStrategyScore(seq), 5.0, EPS);
+}
+

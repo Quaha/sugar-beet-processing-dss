@@ -4,7 +4,7 @@ from ctypes import c_char_p
 import json
 from pathlib import Path
 
-DLL_PATH = Path(__file__).parent / "server_library.dll"
+DLL_PATH = Path(__file__).parent / "core_library.dll"
 _lib = ctypes.CDLL(str(DLL_PATH))
 
 _lib.ProcessJSON.argtypes = [c_char_p]

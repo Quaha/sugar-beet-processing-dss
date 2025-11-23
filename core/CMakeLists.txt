@@ -21,7 +21,7 @@ if(BUILD_FOR_DLL)
         ${HEADER_FILES}
     )
 
-    target_compile_definitions(server_library PRIVATE ${CXX_BRIDGE_DEFINE})
+    target_compile_definitions(${PROJECT_NAME}_library PRIVATE ${CXX_BRIDGE_DEFINE})
 
     # Header files
     target_include_directories(${PROJECT_NAME}_library

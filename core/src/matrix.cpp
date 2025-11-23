@@ -113,3 +113,19 @@ bool   Matrix::hasMaturation()  const { return maturation; }
 bool   Matrix::isInorganic()    const { return inorganic; }
 int    Matrix::getV()           const { return v; }
 double Matrix::getBetaMax()     const { return beta_max; }
+
+double Matrix::getStrategyScore(const std::vector<int>& seq) const {
+	if (seq.size() != static_cast<size_t>(n)) {
+		throw std::invalid_argument("Sequence size must match matrix size!");
+	}
+
+	double sum = 0.0;
+	for (int i = 0; i < n; ++i) {
+		int row = seq[i];
+		if (row < 0 || row >= n) {
+			throw std::out_of_range("Row index out of range!");
+		}
+		sum += data[row][i];
+	}
+	return sum;
+}
