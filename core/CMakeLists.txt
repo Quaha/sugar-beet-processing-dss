@@ -28,6 +28,10 @@ if(BUILD_FOR_DLL)
         PUBLIC
             ${CMAKE_SOURCE_DIR}/include
     )
+
+    # nlohmann_json
+    add_subdirectory(external/nlohmann_json)
+    target_link_libraries(${PROJECT_NAME}_library PRIVATE nlohmann_json::nlohmann_json)
 else()
     add_library(${PROJECT_NAME}_library
         ${SRC_FILES} 
@@ -41,7 +45,10 @@ else()
         PUBLIC
             ${CMAKE_SOURCE_DIR}/include
     )
-	
+
+    # nlohmann_json
+    add_subdirectory(external/nlohmann_json)
+    target_link_libraries(${PROJECT_NAME}_library PRIVATE nlohmann_json::nlohmann_json)
 
     # gtest
     enable_testing()
