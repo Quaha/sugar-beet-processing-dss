@@ -1,1 +1,15 @@
 /server/build/
+
+# Папка виртуального окружения Python
+.venv/
+
+# Папка с настройками VS Code
+.vscode/
+
+# Папки со скомпилированными файлами (build-артефакты)
+build/
+build_dll/
+build_static/
+
+# Файлы рабочей области VS Code
+*.code-workspace
