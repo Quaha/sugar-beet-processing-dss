@@ -1,3 +1,7 @@
+/core/build/
+/core/build_static/
+/core/build_dll/
+/interface/__pycache__
 /server/build/
 
 # Папка виртуального окружения Python
