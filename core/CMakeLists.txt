@@ -48,7 +48,7 @@ else()
 
     # nlohmann_json
     add_subdirectory(external/nlohmann_json)
-    target_link_libraries(${PROJECT_NAME}_library PRIVATE nlohmann_json::nlohmann_json)
+    target_link_libraries(${PROJECT_NAME}_library PUBLIC nlohmann_json::nlohmann_json)
 
     # gtest
     enable_testing()
