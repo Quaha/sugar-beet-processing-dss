@@ -1,5 +1,6 @@
 import sys
 
+from pathlib import Path
 from PyQt6.QtWidgets import QApplication
 from web_app import WebApp
 from cpp_bridge import process_json
@@ -17,15 +18,16 @@ def main():
     app_qt = QApplication(sys.argv)
 
     app = WebApp(
-        title="Cards",
+        title="СППР - Оптимизация переработки свеклы",
         width=1280,
         height=720,
-        favicon="website/assets/icon.ico"
+        favicon="interface/website/assets/icon.ico"
     )
 
-    app.load_local("website/index.html")
-    app.start()
+    path_to_html = Path(__file__).parent / "website" / "index.html"
+    app.load_local(str(path_to_html))
 
+    app.start()
     sys.exit(app_qt.exec())
 
 

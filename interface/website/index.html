@@ -1,33 +1,106 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ru">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <link rel="stylesheet" href="style.css">
-
-        <title> Cards </title>
+        <title>Система поддержки принятия решений</title>
         <link rel="icon" href="assets/icon.ico">
     </head>
-
     <body>
-        <div id="deck" class="slot">
-            <img src="assets/card_back.png" alt="Deck" id="deck_back">
-            <div id="deck_text"></div>
-        </div>
+        <header>
+            <h1>Система поддержки принятия решений</h1>
+            <p>Настройка параметров для симуляции стратегий переработки</p>
+        </header>
 
-        <div id="slots">
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-        </div>
+        <main>
+            <div class="settings-grid">
+
+                <details class="settings-card" open>
+                    <summary>Основные параметры</summary>
+                    <div class="form-group">
+                        <label for="t">Количество экспериментов (T):</label>
+                        <input type="number" id="t" value="50" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="n">Количество этапов (n):</label>
+                        <input type="number" id="n" value="15" min="2">
+                    </div>
+                </details>
+
+                <details class="settings-card" open>
+                    <summary>Параметры сахаристости</summary>
+                    <div class="form-group">
+                        <label for="alpha-min">Мин. начальная сахаристость (α_min):</label>
+                        <input type="number" id="alpha-min" value="0.12" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="alpha-max">Макс. начальная сахаристость (α_max):</label>
+                        <input type="number" id="alpha-max" value="0.22" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="beta-1">Мин. коэф. деградации (β₁):</label>
+                        <input type="number" id="beta-1" value="0.86" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="beta-2">Макс. коэф. деградации (β₂):</label>
+                        <input type="number" id="beta-2" value="0.99" step="0.01">
+                    </div>
+                </details>
+
+                <details class="settings-card" open>
+                    <summary>Дополнительные условия</summary>
+                    <div class="form-group radio-group">
+                        <span>Распределение:</span>
+                        <input type="radio" id="dist-uniform" name="distribution" value="uniform" checked>
+                        <label for="dist-uniform">Равномерное</label>
+                        <input type="radio" id="dist-concentrated" name="distribution" value="concentrated">
+                        <label for="dist-concentrated">Концентрированное</label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="inorganic">
+                        <label for="inorganic">Учитывать влияние неорганики</label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="maturation">
+                        <label for="maturation">Учитывать дозаривание</label>
+                    </div> 
+                    
+                    <div id="maturation-params-block" class="hidden">
+                        <div class="form-group">
+                            <label for="v">Этапы дозаривания (v):</label>
+                            <input type="number" id="v" value="7" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="beta-max">Макс. коэф. дозаривания (β_max):</label>
+                            <input type="number" id="beta-max" value="1.14" step="0.01">
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <button id="run-button">Запустить симуляцию</button>
+
+            <div id="results-container" class="hidden">
+                <hr>
+                <h2>Результаты симуляции</h2>
+                <div id="recommendation-block">
+                    <strong>Рекомендуемая стратегия:</strong>
+                    <span id="recommendation-text"></span>
+                </div>
+                <h3>Средние относительные потери (%)</h3>
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>Стратегия</th>
+                            <th>Потери (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody"></tbody>
+                </table>
+            </div>
+        </main>
 
         <script src="script.js" defer></script>
     </body>

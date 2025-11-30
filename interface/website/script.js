@@ -1,65 +1,105 @@
-const base_cards_path = "assets/";
-const suit = "spades";
+const fakeResponseData = {
+    "names": [
+        "greedy",
+        "thrifty",
+        "greedy_thrifty",
+        "thrifty_greedy",
+        "median",
+        "optimal"
+    ],
+    "avg_loss": [2.82, 4.52, 3.15, 4.08, 3.55, 0.0],
+    "avg_step_ratio": [
 
-const card_values = ["06", "07", "08", "09", "10", "J", "Q", "K", "A"];
+    ]
+};
 
-function getCardPath(value) {
-    return base_cards_path + "card" + "_" + suit + "_" + value + ".png";
+
+const runButton = document.getElementById('run-button');
+const maturationCheckbox = document.getElementById('maturation');
+const maturationParamsBlock = document.getElementById('maturation-params-block');
+
+const resultsContainer = document.getElementById('results-container');
+const recommendationText = document.getElementById('recommendation-text');
+const resultsTableBody = document.getElementById('results-tbody');
+
+
+maturationCheckbox.addEventListener('change', () => {
+    if (maturationCheckbox.checked)
+    {
+        maturationParamsBlock.classList.remove('hidden');
+    }
+    else
+    {
+        maturationParamsBlock.classList.add('hidden');
+    }
+});
+
+
+function handleRunClick()
+{
+    const params = 
+    {
+        T: parseInt(document.getElementById('t').value),
+        n: parseInt(document.getElementById('n').value),
+        alpha_min: parseFloat(document.getElementById('alpha-min').value),
+        alpha_max: parseFloat(document.getElementById('alpha-max').value),
+        beta_1: parseFloat(document.getElementById('beta-1').value),
+        beta_2: parseFloat(document.getElementById('beta-2').value),
+        concentrated: document.getElementById('dist-concentrated').checked,
+        inorganic: document.getElementById('inorganic').checked,
+        maturation: maturationCheckbox.checked,
+    };
+
+    if (params.maturation)
+    {
+        params.maturation_params = {
+            v: parseInt(document.getElementById('v').value),
+            beta_max: parseFloat(document.getElementById('beta-max').value)
+        };
+    }
+
+    console.log("Собранные данные для отправки: ", JSON.stringify(params, null, 2));
+
+    const results = fakeResponseData;
+    console.log("Полученные результаты ", results);
+
+    displayResults(results);
 }
 
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
 
-const slots = document.querySelectorAll(".slot");
-const deck_back = document.getElementById("deck_back");
-const deck = document.getElementById("deck");
+function displayResults(data)
+{
+    let bestStrategy = '';
+    let minLoss = Infinity;
 
-let last_unused_value = 0;
-let next_free_slot = 1;
-
-let shuffled = false;
-
-function onDeckClick() {
-
-    if (!shuffled) {
-        shuffle(card_values);
-        shuffled = true;
-    }
-
-    if (next_free_slot < slots.length) {
-        const img = document.createElement("img");
-
-        img.alt = "Card" + card_values[last_unused_value];
-        img.src = getCardPath(card_values[last_unused_value++]);
-
-        slots[next_free_slot++].appendChild(img);
-
-        setTimeout(() => {
-            img.style.opacity = 1;
-            img.style.transform = "translateY(0)";
-        }, 10);
-
-        if (last_unused_value == card_values.length || next_free_slot == slots.length) {
-            deck_back.style.display = 'none';
-            deck.style.cursor = 'default';
-
-            const deck_text = document.getElementById('deck_text');
-            
-            deck_text.innerText = "Deck";
+    for (let i = 0; i < data.names.length; i++)
+    {
+        const name = data.names[i];
+        const loss = data.avg_loss[i];
+        if (name !== 'optimal' && loss < minLoss)
+        {
+            minLoss = loss;
+            bestStrategy = name;
         }
     }
+
+
+    recommendationText.textContent = bestStrategy || 'Нет данных';
+
+    resultsTableBody.innerHTML = '';
+
+    for (let i = 0; i < data.names.length; i++)
+    {
+        const name = data.names[i];
+        const loss = data.avg_loss[i];
+
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${name}</td><td>${loss.toFixed(2)} %</td>`;
+        resultsTableBody.appendChild(row);
+    }
+
+    resultsContainer.classList.remove('hidden');
 }
 
-deck_back.addEventListener('click', onDeckClick);
 
-function playSound() {
-    const audio = new Audio('assets/card_deal.mp3');
-    audio.playbackRate = 1.2;
-    audio.play();
-}
-
-deck_back.addEventListener('click', playSound);
+runButton.addEventListener('click', handleRunClick);

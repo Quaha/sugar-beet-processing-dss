@@ -1,109 +1,54 @@
-@font-face {
-    font-family: "Digital Pixel";
-    src: url("assets/DigitalPixelV123-Regular.otf") format("opentype");
-    font-weight: normal;
-    font-style: normal;
-}
-
-:root {
-    --background_color: #fffafa;
-
-    /* Раземер карт 60px : 42px */
-    --card-height: 15vh;
-    --card-width: 10.5vh;
-
-    --border_width: 0.25vh;
-    --border_color: #cccccc;
-    --border_style: dashed; /* Пунктир */
-
-    --slots_gap: 3vh;
-
-    --deck_font: "Digital Pixel", "Courier New";
-    --deck_font_size: 1.5vh;
-    --deck_font_color: #555555;
-
-    --animation_speed: 0.25s;
-    --animation_shift: -5vh;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
+.hidden {
+    display: none !important;
 }
 
 body {
-    display: flex;
-
-    background-color: var(--background_color);
-
-    justify-content: center;  /* Выравнивание по горизонтали */
-    align-items: center;      /* Выравнивание по вертикали */
-
-    height: 100vh;
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
 }
 
-#deck {
-    display: flex;
-
-    cursor: pointer;  /* "Кликабельный" курсор */
-
-    border: var(--border_width) var(--border_style) var(--border_color);  /* Граница */
-    box-sizing: border-box;                                               /* Размер учитывается вместе с обводкой */
-
-    height: var(--card-height);
-    width: var(--card-width);
-
-    margin-right: var(--slots_gap);
+.settings-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
 }
 
-#deck_text {
-    font-family: var(--deck_font);
-    font-size: var(--deck_font_size);
-    color: var(--deck_font_color);
-
-    text-align: center;
+.form-group {
+    margin-bottom: 10px;
 }
 
-#slots {
-    display: flex;
-    gap: var(--slots_gap);
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.slot {
-    display: flex;
-
-    justify-content: center;  /* Выравнивание по горизонтали */
-    align-items: center;      /* Выравнивание по вертикали */
-
-    border: var(--border_width) var(--border_style) var(--border_color);  /* Граница */
-    box-sizing: border-box;                                               /* Размер учитывается вместе с обводкой */
-
-    height: var(--card-height);
-    width: var(--card-width);
+input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
 }
 
-#deck img {
-    height: var(--card-height);
-    width: var(--card-width);
-    
-    image-rendering: pixelated;
-
-    opacity: 1;
-    transform: translateY(0);
-    transition: none;
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-.slot img {
-    height: var(--card-height);
-    width: var(--card-width);
-    
-    image-rendering: pixelated;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
 
-    opacity: 0;
-    transform: translateY(var(--animation_shift));
-    transition: all var(--animation_speed);
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
 }
