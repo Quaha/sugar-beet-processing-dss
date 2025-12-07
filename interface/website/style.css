@@ -19,6 +19,13 @@ body {
     margin-bottom: 10px;
 }
 
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
 label {
     display: block;
     margin-bottom: 5px;
