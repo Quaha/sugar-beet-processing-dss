@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
@@ -9,101 +8,124 @@
         <link rel="icon" href="assets/icon.ico">
     </head>
     <body>
-        <header>
-            <h1>Система поддержки принятия решений</h1>
-            <p>Настройка параметров для симуляции стратегий переработки</p>
+        <header class="app-header">
+            <h1>Система поддержки принятия решений (СППР)</h1>
+            <p>Настройка параметров для симуляции стратегий переработки сахарной свеклы.</p>
         </header>
 
         <main>
-            <div class="settings-grid">
-
-                <details class="settings-card" open>
-                    <summary>Основные параметры</summary>
-                    <div class="form-group">
-                        <label for="t">Количество экспериментов (T):</label>
-                        <input type="number" id="t" value="50" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label for="n">Количество этапов (n):</label>
-                        <input type="number" id="n" value="15" min="2">
-                    </div>
-                </details>
-
-                <details class="settings-card" open>
-                    <summary>Параметры сахаристости</summary>
-                    <div class="form-group">
-                        <label for="alpha-min">Мин. начальная сахаристость (α_min):</label>
-                        <input type="number" id="alpha-min" value="0.12" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label for="alpha-max">Макс. начальная сахаристость (α_max):</label>
-                        <input type="number" id="alpha-max" value="0.22" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label for="beta-1">Мин. коэф. деградации (β₁):</label>
-                        <input type="number" id="beta-1" value="0.86" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label for="beta-2">Макс. коэф. деградации (β₂):</label>
-                        <input type="number" id="beta-2" value="0.99" step="0.01">
-                    </div>
-                </details>
-
-                <details class="settings-card" open>
-                    <summary>Дополнительные условия</summary>
-                    <div class="form-group radio-group">
-                        <span>Распределение:</span>
-                        <input type="radio" id="dist-uniform" name="distribution" value="uniform" checked>
-                        <label for="dist-uniform">Равномерное</label>
-                        <input type="radio" id="dist-concentrated" name="distribution" value="concentrated">
-                        <label for="dist-concentrated">Концентрированное</label>
-                    </div>
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" id="inorganic">
-                        <label for="inorganic">Учитывать влияние неорганики</label>
-                    </div>
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" id="maturation">
-                        <label for="maturation">Учитывать дозаривание</label>
-                    </div> 
-                    
-                    <div id="maturation-params-block" class="hidden">
+            <section class="input-section">
+                <h2>Параметры симуляции</h2>
+                
+                <div class="settings-grid">
+                    <details class="settings-card" open>
+                        <summary>Основные параметры</summary>
                         <div class="form-group">
-                            <label for="v">Этапы дозаривания (v):</label>
-                            <input type="number" id="v" value="7" min="1">
+                            <label for="t">Количество экспериментов (T):</label>
+                            <input type="number" id="t" value="50" min="1" title="Натуральное число > 0">
                         </div>
                         <div class="form-group">
-                            <label for="beta-max">Макс. коэф. дозаривания (β_max):</label>
-                            <input type="number" id="beta-max" value="1.14" step="0.01">
+                            <label for="n">Количество этапов (n):</label>
+                            <input type="number" id="n" value="15" min="2" title="Натуральное число >= 2">
                         </div>
-                    </div>
-                </details>
+                    </details>
+
+                    <details class="settings-card" open>
+                        <summary>Параметры сахаристости</summary>
+                        <div class="form-group">
+                            <label for="alpha-min">Мин. нач. сахаристость (α_min):</label>
+                            <input type="number" id="alpha-min" value="0.12" step="0.01" min="0.12" max="0.22" title="В пределах [0.12; 0.22]">
+                        </div>
+                        <div class="form-group">
+                            <label for="alpha-max">Макс. нач. сахаристость (α_max):</label>
+                            <input type="number" id="alpha-max" value="0.22" step="0.01" min="0.12" max="0.22" title="В пределах [0.12; 0.22]">
+                        </div>
+                        <div class="form-group">
+                            <label for="beta-1">Мин. коэф. деградации (β₁):</label>
+                            <input type="number" id="beta-1" value="0.86" step="0.01" min="0.85" max="1.0" title="В пределах (0.85; 1)">
+                        </div>
+                        <div class="form-group">
+                            <label for="beta-2">Макс. коэф. деградации (β₂):</label>
+                            <input type="number" id="beta-2" value="0.99" step="0.01" min="0.85" max="1.0" title="В пределах (0.85; 1)">
+                        </div>
+                    </details>
+
+                    <details class="settings-card" open>
+                        <summary>Дополнительные условия</summary>
+                        <div class="form-group radio-group">
+                            <span>Распределение:</span>
+                            <div class="radio-options">
+                                <input type="radio" id="dist-uniform" name="distribution" value="uniform" checked>
+                                <label for="dist-uniform">Равномерное</label>
+                                <input type="radio" id="dist-concentrated" name="distribution" value="concentrated">
+                                <label for="dist-concentrated">Концентрированное</label>
+                            </div>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="inorganic">
+                            <label for="inorganic">Учитывать влияние неорганики</label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="maturation">
+                            <label for="maturation">Учитывать дозаривание</label>
+                        </div> 
+                        
+                        <div id="maturation-params-block" class="hidden maturation-params-card settings-card">
+                            <p>Параметры дозаривания:</p>
+                            <div class="form-group">
+                                <label for="v">Этапы дозаривания (v):</label>
+                                <input type="number" id="v" value="7" min="1" title="Натуральное число, не превышающее n">
+                            </div>
+                            <div class="form-group">
+                                <label for="beta-max">Макс. коэф. дозаривания (β_max):</label>
+                                <input type="number" id="beta-max" value="1.14" step="0.01" min="1.0" max="1.15" title="В пределах (1; 1.15)">
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <div class="run-button-container">
+                <button id="run-button">Запустить симуляцию</button>
             </div>
 
-            <button id="run-button">Запустить симуляцию</button>
-
-            <div id="results-container" class="hidden">
+            <section id="results-container" class="hidden">
                 <hr>
                 <h2>Результаты симуляции</h2>
-                <div id="recommendation-block">
-                    <strong>Рекомендуемая стратегия:</strong>
-                    <span id="recommendation-text"></span>
-                </div>
-                <h3>Средние относительные потери (%)</h3>
-                <table id="results-table">
-                    <thead>
-                        <tr>
-                            <th>Стратегия</th>
-                            <th>Потери (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="results-tbody"></tbody>
-                </table>
-                <h3>Визуализация потерь:</h3>
-                <div class="chart-container">
-                    <canvas id="loss-chart"></canvas>
-                </div>
-            </div>
+                
+                <div class="results-wrapper">
+
+                    <div class="results-grid">
+                        <div class="recommendation-card">
+                            <h3>Рекомендация</h3>
+                            <div id="recommendation-block">
+                                <p><strong>Рекомендуемая стратегия:</strong></p>
+                                <span id="recommendation-text" class="strategy-name">Ожидание запуска...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="losses-table-card">
+                            <h3>Средние относительные потери (%)</h3>
+                            <div class="table-scroll">
+                                <table id="results-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Стратегия</th>
+                                            <th>Потери (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Визуализация потерь:</h3>
+                    <div class="chart-container chart-card">
+                        <canvas id="loss-chart"></canvas>
+                    </div>
+
+                </div> </section>
         </main>
 
         <script src="qwebchannel.js"></script>

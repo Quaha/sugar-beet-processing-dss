@@ -3,19 +3,39 @@ const maturationCheckbox = document.getElementById('maturation');
 const maturationParamsBlock = document.getElementById('maturation-params-block');
 
 const resultsContainer = document.getElementById('results-container');
-const recommendationText = document.getElementById('recommendation-text');
+const recommendationText = document.getElementById('recommendation-text'); 
 const resultsTableBody = document.getElementById('results-tbody');
 
-const chartCanvas = document.getElementById("loss-chart")
+const chartCanvas = document.getElementById("loss-chart");
+const formInputs = document.querySelectorAll('input[type="number"], input[type="text"]');
 
 let myChart = null;
 let backendApi;
+
+const STRATEGY_NAMES = {
+    'greedy': 'Жадная',
+    'thrifty': 'Бережливая',
+    'greedy_thrifty': 'Жадно-бережливая',
+    'thrifty_greedy': 'Бережливо-жадная',
+    'median': 'Медианная',
+    'optimal': 'Оптимальная'
+};
+
+function getRussianName(englishName) {
+    return STRATEGY_NAMES[englishName] || englishName;
+}
+
 
 window.onload = function() 
 {
     new QWebChannel(qt.webChannelTransport, function(channel) {
         backendApi = channel.objects.backend;
         console.log("Связь с Python установлена!");
+    });
+
+    formInputs.forEach(input => {
+        validateInput(input);
+        input.addEventListener('input', () => validateInput(input));
     });
 };
 
@@ -29,7 +49,96 @@ maturationCheckbox.addEventListener('change', () => {
     {
         maturationParamsBlock.classList.add('hidden');
     }
+    maturationParamsBlock.querySelectorAll('input').forEach(validateInput);
 });
+
+
+function validateInput(inputElement) {
+    const value = parseFloat(inputElement.value);
+    const id = inputElement.id;
+    let isValid = true;
+    let errorMessage = '';
+    let isWarning = false;
+
+    // Проверка 1: Пустое или невалидное число
+    if (inputElement.value.trim() === '' || isNaN(value)) {
+        isValid = false;
+        errorMessage = 'Поле должно быть заполнено числом.';
+    }
+    
+    if (isValid) {
+        // Проверка 2: t, n, v (Целые и положительные)
+        if (id === 't' || id === 'n' || id === 'v') {
+            if (value !== Math.floor(value) || value < 1) {
+                isValid = false;
+                errorMessage = 'Введите целое число больше 0.';
+            }
+        }
+        
+        // Проверка 3: Диапазоны (alpha-min/max, beta-1/2, beta-max)
+        if (id.startsWith('alpha-') || id.startsWith('beta-')) {
+            // Значение должно быть строго больше 0
+            if (value <= 0) {
+                 isValid = false;
+                 errorMessage = 'Введите число больше 0.';
+            }
+            // Дополнительная валидация на верхнюю границу (например, не более 5)
+            if (value > 5.0 && id !== 'beta-max') {
+                 isWarning = true;
+                 errorMessage = 'Внимание: Значение коэффициента выше 5.0.';
+            }
+        }
+
+        // Проверка 4: Предупреждение о больших числах (для T и n)
+        if (id === 't' && value > 1000) {
+            isWarning = true;
+            errorMessage = 'Внимание: Количество экспериментов (T) больше 1000 может вызвать задержки.';
+        }
+        if (id === 'n' && value > 50) {
+            isWarning = true;
+            errorMessage = 'Внимание: Количество этапов (n) больше 50 может вызвать задержки.';
+        }
+    }
+
+
+    // Применение стилей
+    if (!isValid) {
+        inputElement.style.borderColor = 'red';
+        inputElement.title = errorMessage; 
+    } else if (isWarning) {
+        inputElement.style.borderColor = 'orange';
+        inputElement.title = errorMessage;
+    } else {
+        inputElement.style.borderColor = 'green'; 
+        inputElement.title = 'Данные корректны.';
+    }
+    
+    if (inputElement.value.trim() === '') {
+        inputElement.style.borderColor = ''; 
+        inputElement.title = '';
+    }
+
+    return isValid;
+}
+
+function validateAllInputs() {
+    let allValid = true;
+    const requiredInputs = Array.from(formInputs).filter(input => {
+        // Учитываем только видимые поля v и beta-max, если активно дозаривание
+        if (input.id === 'v' || input.id === 'beta-max') {
+            return maturationCheckbox.checked;
+        }
+        return true;
+    });
+
+    requiredInputs.forEach(input => {
+        if (!validateInput(input)) {
+            allValid = false;
+        }
+    });
+
+    return allValid;
+}
 
 
 async function handleRunClick()
@@ -37,6 +146,12 @@ async function handleRunClick()
     if (!backendApi)
     {
         alert("Связь с вычислительным ядром еще не установлена. Пожалуйста, подождите.");
+        return;
+    }
+    
+    // Валидация перед отправкой
+    if (!validateAllInputs()) {
+        alert("Пожалуйста, исправьте некорректно заполненные поля.");
         return;
     }
 
@@ -79,14 +194,9 @@ async function handleRunClick()
 
         const results = JSON.parse(resultJsonString);
 
-        console.log("Полученные результаты:", results);
-
-        if (results.error)
+        if (results.error || results.error_type)
         {
-            alert("Произошла ошибка на стороне C++: " + results.error);
-        } else if (results.error_type) 
-        {
-            alert(`Ошибка валидации от С++: не найдено обязательное поле '${results.message}'`);
+            alert("Произошла ошибка на стороне C++: " + (results.error || results.message));
         } else 
         {
             displayResults(results);
@@ -105,24 +215,30 @@ async function handleRunClick()
 
 function displayResults(data)
 {
-    const names = Object.keys(data);
-    const losses = names.map(name => data[name].avg_loss);
-
-    let bestStrategy = '';
+    const strategyKeys = Object.keys(data);
+    
+    let bestStrategyKey = '';
     let minLoss = Infinity;
 
-    for (const name of names)
+    // Определяем лучшую стратегию (исключая 'optimal')
+    for (const key of strategyKeys)
     {
-        if (name !== 'optimal' && data[name].avg_loss < minLoss)
+        if (key !== 'optimal' && data[key].avg_loss < minLoss)
         {
-            minLoss = data[name].avg_loss;
-            bestStrategy = name;
+            minLoss = data[key].avg_loss;
+            bestStrategyKey = key;
         }
     }
 
-    recommendationText.textContent = bestStrategy || 'Нет данных';
-    updateTable(names, losses);
-    drawOrUpdateChart(names, losses);
+    if (bestStrategyKey) {
+        const russianName = getRussianName(bestStrategyKey);
+        recommendationText.innerHTML = `<strong>${russianName}</strong> (${bestStrategyKey})`;
+    } else {
+        recommendationText.textContent = 'Нет данных';
+    }
+
+    updateTable(strategyKeys, strategyKeys.map(key => data[key].avg_loss));
+    drawOrUpdateChart(strategyKeys, strategyKeys.map(key => data[key].avg_loss));
 
     resultsContainer.classList.remove('hidden');
 }
@@ -134,11 +250,12 @@ function updateTable(names, losses)
 
     for (let i = 0; i < names.length; i++)
     {
-        const name = names[i];
+        const englishName = names[i];
+        const russianName = getRussianName(englishName);
         const loss = losses[i];
 
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${name}</td><td>${(loss * 100).toFixed(2)} %</td>`;
+        row.innerHTML = `<td>${russianName} (${englishName})</td><td>${(loss * 100).toFixed(2)} %</td>`;
         resultsTableBody.appendChild(row);
     }
 }
@@ -146,18 +263,19 @@ function updateTable(names, losses)
 
 function drawOrUpdateChart(labels, losses)
 {
+    const russianLabels = labels.map(label => getRussianName(label));
     const dataForChart = losses.map(loss => loss * 100);
 
     if (myChart)
     {
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataForChart;   
+        myChart.data.labels = russianLabels;
+        myChart.data.datasets[0].data = dataForChart;  
         myChart.update();
     }
     else
     {
         const chartData = {
-            labels: labels,
+            labels: russianLabels,
             datasets: [{
                 label: 'Средние относительные потери (%)',
                 data: dataForChart,
@@ -178,6 +296,12 @@ function drawOrUpdateChart(labels, losses)
                         title: {
                             display: true,
                             text: 'Потери (%)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     }
                 },
