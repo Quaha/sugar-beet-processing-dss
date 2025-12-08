@@ -144,7 +144,8 @@ std::string Solution::to_json(
     for (size_t s = 0; s < names.size(); ++s)
     {
         result[names[s]] = {
-            {"avg_step_ratio", avg_step_ratio[s]},
+            // "avg_step_ratio" содержит данные, но для JS его нужно назвать "progress"
+            {"progress", avg_step_ratio[s]}, 
             {"avg_loss", avg_loss[s]}
         };
     }
