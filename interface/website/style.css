@@ -300,7 +300,8 @@ table#results-table th {
 .chart-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    min-height: 400px;
+    height: auto;
     margin: 0;
 }
 
@@ -472,7 +473,4 @@ table#results-table th {
     .modal-content {
         padding: 20px;
     }
-}
-.chart-card {
-    margin-bottom: 70px;
 }
