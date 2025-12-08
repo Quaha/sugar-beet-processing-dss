@@ -1,8 +1,8 @@
 
 :root {
-    --color-primary: #3498db; /* Синий */
-    --color-secondary: #2ecc71; /* Зеленый */
-    --color-background: #f8f9fa; /* Очень светлый фон */
+    --color-primary: #3498db;
+    --color-secondary: #2ecc71;
+    --color-background: #f8f9fa;
     --color-card-bg: #ffffff; 
     --color-text: #2c3e50; 
     --color-light-text: #7f8c8d;
@@ -27,7 +27,7 @@ main {
     margin: 0 auto;
 }
 
-/* --- Заголовок Приложения --- */
+/* Заголовок Приложения */
 .app-header {
     background-color: var(--color-primary);
     color: var(--color-card-bg);
@@ -300,7 +300,8 @@ table#results-table th {
 .chart-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    min-height: 400px;
+    height: auto;
     margin: 0;
 }
 
@@ -341,5 +342,135 @@ table#results-table th {
         flex-basis: 100%;
         width: 100%;
         text-align: left;
+    }
+}
+
+/* Стили для Кнопки Справки в Header*/
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+.header-content {
+    flex-grow: 1;
+}
+
+.help-button {
+    background-color: white; 
+    color: var(--color-primary); 
+    padding: 8px 15px;
+    border: 2px solid var(--color-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    margin-left: 20px;
+    flex-shrink: 0; 
+}
+
+.help-button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* Стили для Модального Окна (Справка) */
+.modal {
+    position: fixed;
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: var(--color-card-bg);
+    margin: auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    max-width: 700px;
+    width: 90%;
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.visible .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content h2 {
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+    max-width: none;
+    font-size: 1.5em;
+}
+
+.modal-content h3 {
+    color: var(--color-secondary);
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.help-text p, .help-text ul, .help-text ol {
+    margin-bottom: 10px;
+    font-size: 1em;
+}
+
+.help-text ul, .help-text ol {
+    margin-left: 20px;
+}
+
+/* Кнопка закрытия */
+.close-button {
+    color: var(--color-light-text);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--color-text);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Медиа-запрос для заголовка */
+@media (max-width: 600px) {
+    .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .help-button {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .modal-content {
+        padding: 20px;
     }
 }

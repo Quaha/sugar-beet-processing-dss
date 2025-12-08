@@ -7,9 +7,14 @@ const recommendationText = document.getElementById('recommendation-text');
 const resultsTableBody = document.getElementById('results-tbody');
 
 const chartCanvas = document.getElementById("loss-chart");
+const progressChartCanvas = document.getElementById("progress-chart");
 const formInputs = document.querySelectorAll('input[type="number"], input[type="text"]');
 
+const helpButton = document.getElementById('help-button');
+const helpModal = document.getElementById('help-modal');
+const closeButton = document.querySelector('.close-button');
 let myChart = null;
+let progressChart = null;
 let backendApi;
 
 const STRATEGY_NAMES = {
@@ -25,7 +30,17 @@ function getRussianName(englishName) {
     return STRATEGY_NAMES[englishName] || englishName;
 }
 
+function openHelpModal() {
+    helpModal.classList.remove('hidden');
+    setTimeout(() => helpModal.classList.add('visible'), 10); 
+}
 
+function closeHelpModal() {
+    helpModal.classList.remove('visible');
+    setTimeout(() => helpModal.classList.add('hidden'), 300); 
+}
+
+// ИНИЦИАЛИЗАЦИЯ И ВАЛИДАЦИЯ
 window.onload = function() 
 {
     new QWebChannel(qt.webChannelTransport, function(channel) {
@@ -36,6 +51,17 @@ window.onload = function()
     formInputs.forEach(input => {
         validateInput(input);
         input.addEventListener('input', () => validateInput(input));
+    });
+    if (helpButton) {
+        helpButton.addEventListener('click', openHelpModal);
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', closeHelpModal);
+    }
+    window.addEventListener('click', (event) => {
+        if (event.target === helpModal) {
+            closeHelpModal();
+        }
     });
 };
 
@@ -51,7 +77,6 @@ maturationCheckbox.addEventListener('change', () => {
     }
     maturationParamsBlock.querySelectorAll('input').forEach(validateInput);
 });
-
 
 function validateInput(inputElement) {
     const value = parseFloat(inputElement.value);
@@ -140,7 +165,6 @@ function validateAllInputs() {
     return allValid;
 }
 
-
 async function handleRunClick()
 {
     if (!backendApi)
@@ -170,17 +194,15 @@ async function handleRunClick()
 
     if (params.maturation)
     {
-       params.v = parseInt(document.getElementById('v').value);
-       params.beta_max = parseFloat(document.getElementById('beta-max').value);
+        params.v = parseInt(document.getElementById('v').value);
+        params.beta_max = parseFloat(document.getElementById('beta-max').value);
     } 
     else 
     {
         params.v = 1; 
         params.beta_max = 1.0;
     }
-
-    console.log("Собранные данные для отправки: ", JSON.stringify(params, null, 2));
-
+    
     runButton.disabled = true;
     runButton.textContent = "Выполняется...";
 
@@ -215,15 +237,16 @@ async function handleRunClick()
 
 function displayResults(data)
 {
-    const strategyKeys = Object.keys(data);
+    // 1. Фильтруем стратегии: исключаем 'optimal' для отображения
+    const strategiesToDisplay = Object.keys(data).filter(key => key !== 'optimal');
     
     let bestStrategyKey = '';
     let minLoss = Infinity;
 
-    // Определяем лучшую стратегию (исключая 'optimal')
-    for (const key of strategyKeys)
+    // Определяем лучшую стратегию
+    for (const key of strategiesToDisplay)
     {
-        if (key !== 'optimal' && data[key].avg_loss < minLoss)
+        if (data[key].avg_loss < minLoss)
         {
             minLoss = data[key].avg_loss;
             bestStrategyKey = key;
@@ -232,13 +255,19 @@ function displayResults(data)
 
     if (bestStrategyKey) {
         const russianName = getRussianName(bestStrategyKey);
-        recommendationText.innerHTML = `<strong>${russianName}</strong> (${bestStrategyKey})`;
+        recommendationText.innerHTML = `<strong>${russianName}</strong> (${bestStrategyKey})`; 
     } else {
         recommendationText.textContent = 'Нет данных';
     }
-
-    updateTable(strategyKeys, strategyKeys.map(key => data[key].avg_loss));
-    drawOrUpdateChart(strategyKeys, strategyKeys.map(key => data[key].avg_loss));
+    
+    // 2. Данные для графиков и таблицы
+    const lossesToDisplay = strategiesToDisplay.map(key => data[key].avg_loss);
+    
+    updateTable(strategiesToDisplay, lossesToDisplay);
+    drawOrUpdateLossChart(strategiesToDisplay, lossesToDisplay);
+    
+    // 3. Вызов нового графика прогресса
+    drawOrUpdateProgressChart(data); 
 
     resultsContainer.classList.remove('hidden');
 }
@@ -253,7 +282,7 @@ function updateTable(names, losses)
         const englishName = names[i];
         const russianName = getRussianName(englishName);
         const loss = losses[i];
-
+                
         const row = document.createElement('tr');
         row.innerHTML = `<td>${russianName} (${englishName})</td><td>${(loss * 100).toFixed(2)} %</td>`;
         resultsTableBody.appendChild(row);
@@ -261,7 +290,8 @@ function updateTable(names, losses)
 }
 
 
-function drawOrUpdateChart(labels, losses)
+// ФУНКЦИИ ДЛЯ ГРАФИКОВ
+function drawOrUpdateLossChart(labels, losses)
 {
     const russianLabels = labels.map(label => getRussianName(label));
     const dataForChart = losses.map(loss => loss * 100);
@@ -314,6 +344,85 @@ function drawOrUpdateChart(labels, losses)
         };
 
         myChart = new Chart(chartCanvas, config);
+    }
+}
+
+
+function drawOrUpdateProgressChart(data) {
+    const strategiesToDisplay = Object.keys(data).filter(key => key !== 'optimal');
+    
+    const nStages = data[strategiesToDisplay[0]] && data[strategiesToDisplay[0]].progress ? data[strategiesToDisplay[0]].progress.length : 0;
+    const stageLabels = Array.from({ length: nStages }, (_, i) => `Этап ${i + 1}`);
+    
+    const COLORS = [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(153, 102, 255)'
+    ];
+
+    const datasets = strategiesToDisplay.map((key, index) => {
+        const loss_progress = data[key].progress || [];
+        
+        let cumulativeLoss = 0;
+        const cumulativeData = loss_progress.map(stepLossRatio => {
+            cumulativeLoss += stepLossRatio * 100; 
+            return cumulativeLoss;
+        });
+
+        return {
+            label: getRussianName(key),
+            data: cumulativeData,
+            borderColor: COLORS[index % COLORS.length],
+            backgroundColor: COLORS[index % COLORS.length] + '40',
+            tension: 0.1,
+            fill: false,
+            pointRadius: 3
+        };
+    });
+
+    if (progressChart) {
+        progressChart.data.labels = stageLabels;
+        progressChart.data.datasets = datasets;
+        progressChart.update();
+    } else {
+        const config = {
+            type: 'line',
+            data: {
+                labels: stageLabels,
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Прогресс достижения результата'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Этапы (n)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Накопительный результат (% от максимума)' 
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        progressChart = new Chart(progressChartCanvas, config);
     }
 }
 
