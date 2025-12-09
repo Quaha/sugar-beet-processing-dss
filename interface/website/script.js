@@ -270,6 +270,10 @@ function displayResults(data)
     drawOrUpdateProgressChart(data); 
 
     resultsContainer.classList.remove('hidden');
+    setTimeout(() =>
+    {
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
 
 

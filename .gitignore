@@ -17,3 +17,8 @@ build_static/
 
 # Файлы рабочей области VS Code
 *.code-workspace
+
+# Папки и файлы pyinstaller для сборки в exe
+*.spec
+interface/dist/
+interface/build/
