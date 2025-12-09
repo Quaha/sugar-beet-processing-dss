@@ -38,6 +38,7 @@
 
 ### Необходимые `python` зависимости:
 - `pip install PyQt6 PyQt6-WebEngine`
+- `pip install pyinstaller`
 
 ### Как собрать и открыть `core` часть для доработки (Microsoft Visual Studio)?
 - Удалить папку `/core/build_static`, если она есть
@@ -56,3 +57,9 @@
 - В папке `/core` прописать `cmake --build build_dll --config Release`
 
 .dll файл будет лежать в `core/build_dll/Release`
+
+### Как собрать `.exe` приложение
+- Убедиться что в папке `core/build_dll/Release` лежит актуальная собранная версия `core_library.dll`
+- В папке `/interface` выполнить команду `pyinstaller --onefile --windowed  --add-data "website;website" --add-data "cpp_bridge.py;." --add-data "web_app.py;." --add-binary "../core/build_dll/Release/core_library.dll;."--hidden-import PyQt6.sip --icon "website/assets/icon.ico" --name "Sugar beet processing DSS"  main.py`
+
+.exe файл будет лежать в папке `/interface/dist`
