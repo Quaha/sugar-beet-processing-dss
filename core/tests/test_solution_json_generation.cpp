@@ -16,10 +16,10 @@ namespace {
         for (auto& s : strategies)
         {
             ASSERT_TRUE(j.contains(s));
-            ASSERT_TRUE(j[s].contains("avg_step_ratio"));
+            ASSERT_TRUE(j[s].contains("progress"));
             ASSERT_TRUE(j[s].contains("avg_loss"));
 
-            ASSERT_EQ(j[s]["avg_step_ratio"].size(), n_steps);
+            ASSERT_EQ(j[s]["progress"].size(), n_steps);
             ASSERT_TRUE(j[s]["avg_loss"].is_number());
         }
     }
@@ -45,12 +45,12 @@ namespace {
         std::string json_str = Solution::to_json(names, avg_step_ratio, avg_loss);
         json j = json::parse(json_str);
 
-        EXPECT_EQ(j["greedy"]["avg_step_ratio"][0], 0.1);
-        EXPECT_EQ(j["greedy"]["avg_step_ratio"][1], 0.2);
+        EXPECT_EQ(j["greedy"]["progress"][0], 0.1);
+        EXPECT_EQ(j["greedy"]["progress"][1], 0.2);
         EXPECT_DOUBLE_EQ(j["greedy"]["avg_loss"], 0.05);
 
-        EXPECT_EQ(j["thrifty"]["avg_step_ratio"][0], 0.3);
-        EXPECT_EQ(j["thrifty"]["avg_step_ratio"][1], 0.4);
+        EXPECT_EQ(j["thrifty"]["progress"][0], 0.3);
+        EXPECT_EQ(j["thrifty"]["progress"][1], 0.4);
         EXPECT_DOUBLE_EQ(j["thrifty"]["avg_loss"], 0.07);
     }
 
@@ -64,8 +64,8 @@ namespace {
         json j = json::parse(json_str);
 
         ASSERT_TRUE(j.contains("greedy"));
-        ASSERT_TRUE(j["greedy"]["avg_step_ratio"].is_array());
-        ASSERT_EQ(j["greedy"]["avg_step_ratio"].size(), 0);
+        ASSERT_TRUE(j["greedy"]["progress"].is_array());
+        ASSERT_EQ(j["greedy"]["progress"].size(), 0);
         EXPECT_DOUBLE_EQ(j["greedy"]["avg_loss"], 0.0);
     }
 
@@ -79,8 +79,8 @@ namespace {
         std::string json_str = Solution::to_json(names, avg_step_ratio, avg_loss);
         json j = json::parse(json_str);
 
-        ASSERT_EQ(j["optimal"]["avg_step_ratio"].size(), N);
-        for (auto val : j["optimal"]["avg_step_ratio"])
+        ASSERT_EQ(j["optimal"]["progress"].size(), N);
+        for (auto val : j["optimal"]["progress"])
         {
             EXPECT_DOUBLE_EQ(val, 1.0);
         }
