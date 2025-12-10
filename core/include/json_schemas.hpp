@@ -39,6 +39,14 @@ public:
 
     static std::variant<SimulationParams, ParsingError> from_json(const std::string& json_str);
 
+    SimulationParams(
+        int t_, int n_, double alpha_min_, double alpha_max_,
+        double beta_1_, double beta_2_, bool concentrated_, bool maturation_,
+        bool inorganic_, const std::optional<MaturationParams>& maturation_params_)
+        : t(t_), n(n_), alpha_min(alpha_min_), alpha_max(alpha_max_),
+        beta_1(beta_1_), beta_2(beta_2_), concentrated(concentrated_),
+        maturation(maturation_), inorganic(inorganic_), maturation_params(maturation_params_)
+    {}
 private:
     int t;
     int n;
@@ -51,14 +59,6 @@ private:
     bool inorganic;
     std::optional<MaturationParams> maturation_params;
 
-    SimulationParams(
-        int t_, int n_, double alpha_min_, double alpha_max_,
-        double beta_1_, double beta_2_, bool concentrated_, bool maturation_,
-        bool inorganic_, const std::optional<MaturationParams>& maturation_params_)
-        : t(t_), n(n_), alpha_min(alpha_min_), alpha_max(alpha_max_),
-        beta_1(beta_1_), beta_2(beta_2_), concentrated(concentrated_),
-        maturation(maturation_), inorganic(inorganic_), maturation_params(maturation_params_)
-    {}
 };
 
 class Solution

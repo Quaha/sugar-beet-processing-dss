@@ -76,7 +76,7 @@ DLL_API const char* ProcessJSON(const char* json_input) {
             }
 
             double score = m.getStrategyScore(seq);
-            avg_loss[s] += (optimal_score - score);
+            avg_loss[s] += (optimal_score - score) / optimal_score;
         }
     }
 
@@ -85,6 +85,18 @@ DLL_API const char* ProcessJSON(const char* json_input) {
             avg_step_ratio[s][i] /= params.getT();
         }
         avg_loss[s] /= params.getT();
+    }
+
+    double sum_optimal = 0.0;
+
+    for (int i = 0; i < params.getN(); i++) {
+        sum_optimal += avg_step_ratio[S - 1][i];
+    }
+
+    for (int s = 0; s < S; ++s) {
+        for (int i = 0; i < params.getN(); ++i) {
+            avg_step_ratio[s][i] /= sum_optimal;
+        }
     }
 
     json_result = Solution::to_json(names, avg_step_ratio, avg_loss);

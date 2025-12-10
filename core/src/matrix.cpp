@@ -62,7 +62,7 @@ void Matrix::fillMatrix(
 			double delta1 = GetRandomDouble(0.0, (beta_max - 1.0) / 4.0);
 			double l1 = GetRandomDouble(1.0, beta_max - delta1);
 			double r1 = l1 + delta1;
-			for (int j = 1; j <= v; ++j) {
+			for (int j = 1; j <= std::min(v, n - 1); ++j) {
 				double b = GetRandomDouble(l1, r1);
 				data[i][j] = std::min(1.0, b * data[i][j - 1]);
 			}
@@ -77,7 +77,7 @@ void Matrix::fillMatrix(
 	} 
 	else {
 		for (int i = 0; i < n; ++i) {
-			for (int j = 1; j <= v; ++j) {
+			for (int j = 1; j <= std::min(v, n - 1); ++j) {
 				double b = GetRandomDouble(1.0, beta_max);
 				data[i][j] = std::min(1.0, b * data[i][j - 1]);
 			}
