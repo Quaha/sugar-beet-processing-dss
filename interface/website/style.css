@@ -474,3 +474,12 @@ table#results-table th {
         padding: 20px;
     }
 }
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}

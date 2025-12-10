@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtGui import QIcon
 from web_app import WebApp
 from cpp_bridge import process_json
 
@@ -30,18 +31,20 @@ class Api(QObject):
 
 def main():
     app_qt = QApplication(sys.argv)
+
+    path_to_project = Path(__file__).parent
+    path_to_icon = path_to_project / "website" / "assets" / "icon.ico"
+    app_qt.setWindowIcon(QIcon(str(path_to_icon)))
     
     api_bridge = Api()
 
-    path_to_project = Path(__file__).parent
     path_to_html = path_to_project / "website" / "index.html"
-    path_to_icon = path_to_project / "website" / "icon.ico"
 
     app = WebApp(
         title="СППР - Оптимизация переработки свеклы",
         width=1280,
         height=720,
-        favicon="interface/website/assets/icon.ico",
+        favicon=str(path_to_icon),   # <-- ВАЖНО: абсолютный путь!
         js_api=api_bridge
     )
 
