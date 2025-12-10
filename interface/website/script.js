@@ -52,6 +52,7 @@ window.onload = function()
         validateInput(input);
         input.addEventListener('input', () => validateInput(input));
     });
+
     if (helpButton) {
         helpButton.addEventListener('click', openHelpModal);
     }
@@ -79,6 +80,7 @@ maturationCheckbox.addEventListener('change', () => {
 });
 
 function validateInput(inputElement) {
+
     const value = parseFloat(inputElement.value);
     const id = inputElement.id;
     let isValid = true;
@@ -88,29 +90,74 @@ function validateInput(inputElement) {
     // Проверка 1: Пустое или невалидное число
     if (inputElement.value.trim() === '' || isNaN(value)) {
         isValid = false;
-        errorMessage = 'Поле должно быть заполнено числом.';
+        errorMessage = 'В одном из полей введено не число';
     }
     
     if (isValid) {
         // Проверка 2: t, n, v (Целые и положительные)
-        if (id === 't' || id === 'n' || id === 'v') {
-            if (value !== Math.floor(value) || value < 1) {
+        if (id === 't') {
+            // Проверка: T должно быть целым числом > 0
+            if (value < 1) {
                 isValid = false;
-                errorMessage = 'Введите целое число больше 0.';
+                errorMessage = 'Значение "T" должно быть больше 0';
+            } else if (value !== Math.floor(value)) {
+                isValid = false;
+                errorMessage = 'Значение "T" должно быть целым';
+            }
+        } 
+
+        if (id === 'n') {
+            // Проверка: n должно быть целым числом > 0
+            if (value < 1) {
+                isValid = false;
+                errorMessage = 'Значение "n" должно быть больше 0';
+            } else if (value !== Math.floor(value)) {
+                isValid = false;
+                errorMessage = 'Значение "n" должно быть целым';
+            }
+        } 
+
+        if (id === 'v') {
+            // Проверка: v должно быть целым числом > 0
+            if (value < 1) {
+                isValid = false;
+                errorMessage = 'Значение "v" должно быть больше 0';
+            } else if (value !== Math.floor(value)) {
+                isValid = false;
+                errorMessage = 'Значение "v" должно быть целым';
             }
         }
+
         
         // Проверка 3: Диапазоны (alpha-min/max, beta-1/2, beta-max)
-        if (id.startsWith('alpha-') || id.startsWith('beta-')) {
-            // Значение должно быть строго больше 0
-            if (value <= 0) {
-                 isValid = false;
-                 errorMessage = 'Введите число больше 0.';
+        if (id === 'alpha-min') {
+            if (value < 0.12 || value > 0.22) {
+                isValid = false;
+                errorMessage = 'Значение "alpha-min" должно быть в отрезке [0.12; 0.22]';
             }
-            // Дополнительная валидация на верхнюю границу (например, не более 5)
-            if (value > 5.0 && id !== 'beta-max') {
-                 isWarning = true;
-                 errorMessage = 'Внимание: Значение коэффициента выше 5.0.';
+        } 
+        else if (id === 'alpha-max') {
+            if (value <= 0 || value >= 1) {
+                isValid = false;
+                errorMessage = 'Значение "alpha-max" должно быть в отрезке [0.12; 0.22]';
+            }
+        } 
+        else if (id === 'beta-1') {
+            if (value <= 0 || value >= 1) {
+                isValid = false;
+                errorMessage = 'Значение "beta-1" должно быть в интервале (0.85; 1)';
+            }
+        } 
+        else if (id === 'beta-2') {
+            if (value <= 0 || value >= 1) {
+                isValid = false;
+                errorMessage = 'Значение "beta-2" должно быть в интервале (0.85; 1)';
+            }
+        } 
+        else if (id === 'beta-max') {
+            if (value <= 1) {
+                isValid = false;
+                errorMessage = 'Значение "beta-max" должно быть в интервале (1; 1.15)';
             }
         }
 
@@ -175,7 +222,7 @@ async function handleRunClick()
     
     // Валидация перед отправкой
     if (!validateAllInputs()) {
-        alert("Пожалуйста, исправьте некорректно заполненные поля.");
+        alert("Пожалуйста, исправьте некорректно заполненные поля");
         return;
     }
 
